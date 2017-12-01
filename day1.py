@@ -1,6 +1,5 @@
 import unittest
 
-
 class TestAoc(unittest.TestCase):
 	def test_x(self):
 		self.assertEqual(perform("1212"), 6)
@@ -20,14 +19,20 @@ def perform(s):
 	jump = l // 2
 	r = 0
 	for i in range(l):
-		if i >= jump:
-			next =  i - jump
-		else:
-			next = i + jump
-		if s[i] == s[next]:
-			r += int(s[i])
+		r += compare(s, i, jump)
 	return r		
 
+def next(i, jump):
+	if i >= jump:
+		return  i - jump
+	return i + jump
+
+def compare(s, i, jump):
+	if s[i] == s[next(i,jump)]:
+		return int(s[i])
+	return 0
+
+
 if __name__ == '__main__':
-    #unittest.main()
-    print(perform(read("day1.txt")))
+    unittest.main()
+    #print(perform(read("day1.txt")))
