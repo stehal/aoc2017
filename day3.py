@@ -1,8 +1,6 @@
-
 visited = {(0,0):1, (1,0):1}
- 
 previous = (0,0)
-current = (1, 0)
+current = (1,0)
 
 def adjacent(p):
 	adj = set()
@@ -17,16 +15,15 @@ def adjacent(p):
 	return adj
 
 def val(next):
-	adj = adjacent(next)
 	r = 0
-	for  p in adj:
-		if p in visited:
-			r  += visited[p]
+	for  p in adjacent(next):
+		r += visited.get(p, 0)
 	return r
 	
 def perform(previous, current) :
 	delta_x = current[0] - previous[0]
 	delta_y = current[1] - previous[1]
+	
 	if delta_x != 0:
 		if (current[0], current[1] + delta_x) not in visited:
 			next =  (current[0], current[1] + delta_x)
@@ -39,12 +36,8 @@ def perform(previous, current) :
 		else:
 			next =  (current[0], current[1] + delta_y)
 
-	
-	value = val(next)
-	visited[next] = value
-	previous = current
-	current = next
-	return (previous, current, value)
+	visited[next] = val(next)
+	return (current, next, visited[next])
 
 value = 1
 while value < 265149:
@@ -53,8 +46,4 @@ while value < 265149:
 	current = t[1]
 	value = t[2]
 
-		
-print(visited[current])
-
-
-
+print(visited[current])	
