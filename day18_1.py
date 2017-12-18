@@ -1,7 +1,4 @@
 import string
-from queue import Queue
-from threading import Thread
-
 
 def c2i(s, reg):
 	try: 
@@ -16,23 +13,10 @@ def read(fn):
 	return lines	
 
 def perform(insts):
-	reg0 = {"p":0}
-	pos0 = 0
-	reg1 = {"p":1}
-	pos1 = 0
-	
-	send_to_1 = Queue()
-	send_to_0 = Queue()
-	
-	t0 = Thread(target=duet, args=(0,insts, reg0,pos0,send_to_1, send_to_0,))
-	t1 = Thread(target=duet, args=(1,insts, reg1, pos1, send_to_0, send_to_1,))
-	t0.start()
-	t1.start()
-
-
-
-def duet(id, insts, reg, pos, snd_q, rcv_q):
-	count = 0
+	reg = {}
+	pos = 0
+	last_freq = 0
+		
 	while True:
 		inst = insts[pos].split()
 		cmd = inst[0]
@@ -42,8 +26,7 @@ def duet(id, insts, reg, pos, snd_q, rcv_q):
 			reg[x] = c2i(inst[2],reg)
 			pos +=1
 		elif cmd == "snd":
-			snd_q.put(c2i(x,reg))
-			count +=1
+			last_freq = c2i(x,reg)
 			pos +=1
 
 		elif cmd == "add":
@@ -59,11 +42,8 @@ def duet(id, insts, reg, pos, snd_q, rcv_q):
 			pos +=1
 
 		elif cmd == "rcv":
-			try:
-				reg[x] = rcv_q.get(True, 0.1)
-			except:
-				print("id", id ,  count)
-				return
+			if c2i(x,reg) > 0:
+				return last_freq
 			pos +=1
 		elif cmd == "jgz":
 			if c2i(x,reg) > 0:
@@ -75,7 +55,4 @@ def run(fn):
 	return perform(read(fn))
     
 if __name__ == '__main__':
-    #unittest.main()
-    print(run("day19.txt"))
-    
-    
+    print(run("day18.txt"))
